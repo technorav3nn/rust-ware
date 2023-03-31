@@ -1,110 +1,107 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { invoke } from "@tauri-apps/api/tauri";
-import Image from "next/image";
-import reactLogo from "../assets/react.svg";
-import tauriLogo from "../assets/tauri.svg";
-import mantineLogo from "../assets/mantine.svg";
+import { listen, once } from "@tauri-apps/api/event";
 import {
-  Button,
-  Container,
-  createStyles,
-  Divider,
-  Group,
-  Stack,
-  Text,
-  TextInput,
-  Title,
+    Button,
+    Center,
+    Container,
+    createStyles,
+    Group,
+    Progress,
+    Text,
 } from "@mantine/core";
+import useAsyncEffect from "use-async-effect";
 
 const useStyles = createStyles((theme) => ({
-  container: {
-    paddingTop: "10vh",
-  },
+    container: {
+        paddingTop: "10vh",
+    },
 
-  NextInfo: {
-    position: "absolute",
-    bottom: "10px",
-    width: "100%",
-  },
+    NextInfo: {
+        position: "absolute",
+        bottom: "10px",
+        width: "100%",
+    },
 }));
 
 function App() {
-  const [greetMsg, setGreetMsg] = useState("");
-  const [name, setName] = useState("");
-  const { classes } = useStyles();
+    const [greetMsg, setGreetMsg] = useState("");
 
-  async function greet() {
-    // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
-    setGreetMsg(await invoke("greet", { name }));
-  }
+    const [progress, setProgress] = useState<number | null>(null);
 
-  return (
-    <>
-      <Container className={classes.container}>
-        <Stack align="center" spacing={25}>
-          <Title order={1}>Welcome !!!</Title>
-          <Group position="center" spacing={50}>
-            <span className="logos">
-              <a href="https://mantine.dev" target="_blank">
-                <Image
-                  width={84}
-                  height={84}
-                  src={mantineLogo}
-                  className="logo mantine"
-                  alt="Mantine logo"
-                />
-              </a>
-            </span>
-            <span className="logos">
-              <a href="https://tauri.app" target="_blank">
-                <Image
-                  width={84}
-                  height={84}
-                  src={tauriLogo}
-                  className="logo tauri"
-                  alt="Tauri logo"
-                />
-              </a>
-            </span>
-            <span className="logos">
-              <a href="https://reactjs.org" target="_blank">
-                <Image
-                  width={84}
-                  height={84}
-                  src={reactLogo}
-                  className="logo react"
-                  alt="React logo"
-                />
-              </a>
-            </span>
-          </Group>
-          <Text>
-            Click on the Mantine, Tauri and React logos to learn more.
-          </Text>
+    const { classes } = useStyles();
 
-          <Divider w={500} />
+    useAsyncEffect(async () => {
+        const destroy = await listen<{
+            progress: number;
+            size: number;
+        }>("download_file_loading", (event) => {
+            setProgress((event.payload!.progress / event.payload!.size) * 100);
+        });
 
-          <Group position="center">
-            <TextInput
-              placeholder="Enter your name"
-              onChange={(e) => setName(e.currentTarget.value)}
-            />
-            <Button onClick={() => greet()} variant="default">
-              Greet
-            </Button>
-          </Group>
+        return () => {
+            destroy();
+        };
+    }, []);
 
-          <Text>{greetMsg}</Text>
-        </Stack>
-      </Container>
-      <Text align="center" className={classes.NextInfo}>
-        The frontend is powered with{" "}
-        <a href="https://nextjs.org" target="_blank">
-          Next.js
-        </a>
-      </Text>
-    </>
-  );
+    async function greet() {
+        // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
+        setGreetMsg(await invoke("greet", { name }));
+    }
+
+    async function testLogin() {
+        await invoke("authenticate", {
+            username: "DeathBlows",
+            password: "no lol",
+        });
+    }
+
+    async function testDownload() {
+        await invoke("download_file", {
+            url: "https://script-ware.com/api/serve/beta/libScriptWare.dylib",
+            filePath: "/Users/Shared/ScriptWare/libScriptWare.dylib",
+            fileNameAlias: "Script-Ware Engine",
+        });
+    }
+
+    async function getProcesses(): Promise<
+        { pid: number; command: string; argumentss: string[] }[]
+    > {
+        return await invoke("get_processes", {});
+    }
+
+    return (
+        <>
+            <Container className={classes.container}>
+                <Group position="center">
+                    <Button onClick={() => testLogin()} variant="default">
+                        Login lol
+                    </Button>
+                    <Button onClick={() => testDownload()} variant="default">
+                        Download lol
+                    </Button>
+                    <Button
+                        onClick={() =>
+                            getProcesses().then((res) => console.log(res))
+                        }
+                        variant="default"
+                    >
+                        Get Processes
+                    </Button>
+                    <br />
+                </Group>
+
+                <Progress size="lg" value={progress ?? 0}></Progress>
+                <Text>{greetMsg}</Text>
+            </Container>
+            <Text align="center" className={classes.NextInfo}>
+                The frontend is powered with{" "}
+                <a href="https://nextjs.org" target="_blank">
+                    Next.js
+                </a>
+            </Text>
+        </>
+    );
 }
 
 export default App;

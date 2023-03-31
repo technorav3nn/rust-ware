@@ -3,24 +3,43 @@
     windows_subsystem = "windows"
 )]
 
-// Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
+mod commands;
+mod exploit;
+mod trait_impl;
+
+use commands::{authenticate, download_file, get_processes, greet};
+use exploit::comms::CommsServer;
+use exploit::injection::get_roblox_processes;
+
 use tauri::Manager;
 
-#[tauri::command]
-fn greet(name: &str) -> String {
-    format!("Hello, {}! You've been greeted from Rust!", name)
-}
+#[macro_use]
+extern crate lazy_static;
 
-fn main() {
+#[tokio::main]
+async fn main() {
+    tokio::spawn(async move {
+        let mut server = CommsServer::new().await.unwrap();
+        println!("Listening on: {}", server.listener.local_addr().unwrap());
+        loop {
+            server.accept().await.unwrap();
+        }
+    });
+
     tauri::Builder::default()
         .setup(|app| {
-            let window = app.get_window("main").unwrap();
-
-            window_vibrancy::apply_mica(&window).expect("ERROR");
+            let _window = app.get_window("main").unwrap();
+            let processes = get_roblox_processes();
+            println!("{:?}", processes);
 
             Ok(())
         })
-        .invoke_handler(tauri::generate_handler![greet])
+        .invoke_handler(tauri::generate_handler![
+            greet,
+            authenticate,
+            download_file,
+            get_processes
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

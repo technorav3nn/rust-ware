@@ -1,52 +1,67 @@
 {
-  "build": {
-    "beforeDevCommand": "pnpm dev",
-    "beforeBuildCommand": "pnpm build",
-    "devPath": "http://localhost:1420",
-    "distDir": "../dist",
-    "withGlobalTauri": false
-  },
-  "package": {
-    "productName": "react-mantine-tauri-template",
-    "version": "0.0.0"
-  },
-  "tauri": {
-    "allowlist": {
-      "all": true
+    "build": {
+        "beforeDevCommand": "yarn dev",
+        "beforeBuildCommand": "yarn build",
+        "devPath": "http://localhost:1420",
+        "distDir": "../dist",
+        "withGlobalTauri": false
     },
-    "bundle": {
-      "active": true,
-      "category": "Utility",
-      "copyright": "",
-      "externalBin": [],
-      "icon": ["icons/32x32.png", "icons/128x128.png", "icons/icon.ico"],
-      "identifier": "com.rmt.dev",
-      "longDescription": "",
-      "resources": [],
-      "shortDescription": "This is a template app for react-mantine-tauri-template",
-      "targets": ["msi", "app"],
-      "windows": {
-        "certificateThumbprint": null,
-        "digestAlgorithm": "sha256",
-        "timestampUrl": ""
-      }
+    "package": {
+        "productName": "react-mantine-tauri-template",
+        "version": "0.0.0"
     },
-    "security": {
-      "csp": null
-    },
-    "updater": {
-      "active": false
-    },
-    "windows": [
-      {
-        "width": 800,
-        "height": 600,
-        "resizable": true,
-        "fullscreen": false,
-        "transparent": true,
-        "decorations": false,
-        "title": "react-mantine-tauri-template"
-      }
-    ]
-  }
+    "tauri": {
+        "allowlist": {
+            "shell": {
+                "sidecar": true,
+                "scope": [
+                    { "name": "binaries/SWMAuth2", "sidecar": true },
+                    {
+                        "name": "run-codesign",
+                        "cmd": "/usr/bin/codesign",
+                        "args": ["--remove-signature", { "validator": "\\S+" }]
+                    },
+                    {
+                        "name": "/Applications/Roblox.app/Contents/MacOS/RobloxPlayer",
+                        "cmd": "/Applications/Roblox.app/Contents/MacOS/RobloxPlayer",
+                        "args": true
+                    }
+                ]
+            }
+        },
+        "bundle": {
+            "active": true,
+            "category": "Utility",
+            "copyright": "",
+            "externalBin": ["binaries/SWMAuth2"],
+            "icon": ["icons/32x32.png", "icons/128x128.png", "icons/icon.ico"],
+            "identifier": "com.rmt.dev",
+            "longDescription": "",
+            "resources": [],
+            "shortDescription": "This is a template app for react-mantine-tauri-template",
+            "targets": ["app"],
+            "windows": {
+                "certificateThumbprint": null,
+                "digestAlgorithm": "sha256",
+                "timestampUrl": ""
+            }
+        },
+        "security": {
+            "csp": null
+        },
+        "updater": {
+            "active": false
+        },
+        "windows": [
+            {
+                "width": 800,
+                "height": 600,
+                "resizable": true,
+                "fullscreen": false,
+                "transparent": false,
+                "decorations": true,
+                "title": "react-mantine-tauri-template"
+            }
+        ]
+    }
 }
