@@ -1,20 +1,20 @@
-#![cfg_attr(
-    all(not(debug_assertions), target_os = "windows"),
-    windows_subsystem = "windows"
-)]
-
 mod commands;
+mod consts;
 mod exploit;
+mod state;
 mod trait_impl;
-
-use commands::{authenticate, download_file, get_processes, greet};
-use exploit::comms::CommsServer;
-use exploit::injection::get_roblox_processes;
-
-use tauri::Manager;
 
 #[macro_use]
 extern crate lazy_static;
+
+use tauri::Manager;
+
+use commands::{authenticate, download_file, get_processes, greet, kill_process, try_inject};
+
+use exploit::comms::CommsServer;
+use exploit::injection::get_roblox_processes;
+
+use state::AuthState;
 
 #[tokio::main]
 async fn main() {
@@ -22,7 +22,7 @@ async fn main() {
         let mut server = CommsServer::new().await.unwrap();
         println!("Listening on: {}", server.listener.local_addr().unwrap());
         loop {
-            server.accept().await.unwrap();
+            server.accept().await.expect("Failed to accept connection");
         }
     });
 
@@ -38,8 +38,11 @@ async fn main() {
             greet,
             authenticate,
             download_file,
-            get_processes
+            get_processes,
+            kill_process,
+            try_inject
         ])
+        .manage(AuthState(Default::default()))
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

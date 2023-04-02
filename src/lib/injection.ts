@@ -8,7 +8,7 @@ interface GetProcessesResult {
     arguments: string[];
 }
 
-export function removeCodesign() {
+function removeCodesign() {
     try {
         new Command("/usr/bin/codesign", [
             "--remove-signature",
@@ -27,6 +27,39 @@ export function removeCodesign() {
     }
 }
 
+function spawnRoblox(args: string) {
+    console.log("Spawning Roblox with args", args);
+    console.log("zsh", [
+        "-c",
+        `"/Applications/Roblox.app/Contents/MacOS/RobloxPlayer" "${args}"`,
+    ]);
+    const command = new Command("sh", [
+        "-c",
+        `"/Applications/Roblox.app/Contents/MacOS/RobloxPlayer" "${args}"`,
+    ]);
+    command.on("close", (code) => {
+        console.log("Closed with code", code);
+    });
+
+    command.on("error", (error) => {
+        console.log("Error", error);
+    });
+
+    command.stdout.on("data", (data) => {
+        console.log("stdout", data.toString());
+    });
+
+    command.stderr.on("data", (data) => {
+        console.log("stderr", data.toString());
+    });
+
+    command.spawn();
+}
+
+function killProcess(pid: number) {
+    new Command("kill", ["-9", pid.toString()]).spawn();
+}
+
 export async function inject() {
     const { authToken } = globalStore.getState();
 
@@ -34,7 +67,35 @@ export async function inject() {
         throw new Error("You are not logged in!");
     }
 
-    removeCodesign();
+    const processes = await getRobloxProcesses();
+    let process: GetProcessesResult | null = processes[0];
+
+    if (!process) {
+        while (!process) {
+            console.log("Waiting for Roblox to start...");
+            process = (await getRobloxProcesses())[0];
+
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+        }
+
+        console.log("Roblox started!");
+        console.log(process);
+
+        killProcess(process.pid!);
+
+        console.log("Killed Roblox!");
+
+        let newCmd = process.command!.replace(
+            "/Applications/Roblox.app/Contents/MacOS/RobloxPlayer",
+            ""
+        );
+
+        spawnRoblox(newCmd);
+
+        process = null;
+    }
+
+    console.log("Roblox is already running!");
 }
 
 export function downloadFile(options: { url: string; destination: string }) {
@@ -42,38 +103,5 @@ export function downloadFile(options: { url: string; destination: string }) {
 }
 
 export async function getRobloxProcesses(): Promise<GetProcessesResult[]> {
-    const process = new Command("ps", ["-exo", "pid,args"]);
-    let stdout = "";
-
-    process.stdout.on("data", (data: Buffer) => {
-        stdout += data.toString();
-    });
-
-    await new Promise((resolve, reject) => {
-        process.on("close", resolve);
-        process.on("error", reject);
-    });
-
-    return stdout
-        .split("\n")
-        .filter(
-            (e) =>
-                e.includes("RobloxPlayer") &&
-                !e.includes("--crashHandler") &&
-                (e.includes("-ticket") || e.endsWith("RobloxPlayer"))
-        )
-        .map((e) => e.split(" "))
-        .map((e) => {
-            while (isNaN(parseInt(e[0]))) {
-                e.shift();
-            }
-            return e;
-        })
-        .map((result) => {
-            return {
-                pid: parseInt(result.shift() ?? "0"),
-                command: result.shift(),
-                arguments: result,
-            };
-        });
+    return invoke("get_processes");
 }

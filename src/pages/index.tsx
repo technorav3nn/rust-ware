@@ -11,6 +11,8 @@ import {
     Text,
 } from "@mantine/core";
 import useAsyncEffect from "use-async-effect";
+import { inject } from "../lib/injection";
+import { useGlobalStore } from "../lib/state";
 
 const useStyles = createStyles((theme) => ({
     container: {
@@ -26,8 +28,12 @@ const useStyles = createStyles((theme) => ({
 
 function App() {
     const [greetMsg, setGreetMsg] = useState("");
-
     const [progress, setProgress] = useState<number | null>(null);
+
+    const [authToken, setAuthToken] = useGlobalStore((state) => [
+        state.authToken,
+        state.setAuthToken,
+    ]);
 
     const { classes } = useStyles();
 
@@ -50,10 +56,11 @@ function App() {
     }
 
     async function testLogin() {
-        await invoke("authenticate", {
+        let token = await invoke<string>("authenticate", {
             username: "DeathBlows",
-            password: "no lol",
+            password: "lollol123",
         });
+        setAuthToken(token);
     }
 
     async function testDownload() {
@@ -87,6 +94,9 @@ function App() {
                         variant="default"
                     >
                         Get Processes
+                    </Button>
+                    <Button onClick={() => inject()} variant="default">
+                        Inject test {authToken}
                     </Button>
                     <br />
                 </Group>

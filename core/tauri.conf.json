@@ -22,11 +22,22 @@
                         "args": ["--remove-signature", { "validator": "\\S+" }]
                     },
                     {
-                        "name": "/Applications/Roblox.app/Contents/MacOS/RobloxPlayer",
+                        "name": "roblox-player",
                         "cmd": "/Applications/Roblox.app/Contents/MacOS/RobloxPlayer",
                         "args": true
+                    },
+                    {
+                        "name": "kill",
+                        "cmd": "/bin/kill",
+                        "args": true
+                    },
+                    {
+                        "name": "sh",
+                        "cmd": "/bin/sh",
+                        "args": true
                     }
-                ]
+                ],
+                "execute": true
             }
         },
         "bundle": {
