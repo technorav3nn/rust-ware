@@ -1,24 +1,23 @@
 [package]
-name = "react-mantine-tauri-template"
+name = "rust-ware"
 version = "0.0.0"
-description = "A Tauri App"
-authors = ["you"]
+description = "A custom ui for Script-Ware Mac."
+authors = ["Death_Blows"]
 license = "MIT"
-repository = "https://github.com/U-C-S/react-mantine-tauri-template"
+repository = "https://github.com/technorav3nn/rust-ware"
 edition = "2021"
 rust-version = "1.57"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [build-dependencies]
 tauri-build = { version = "1.1", features = [] }
 
 [dependencies]
+tauri-plugin-log = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "dev" }
 serde_json = "1.0"
 serde = { version = "1.0", features = ["derive"] }
 tauri = { version = "1.1", features = ["shell-execute", "shell-sidecar"] }
 window-vibrancy = "0.3.1"
-sw_auth = "1.1.1"
+sw_auth = "1.1.2"
 base64 = "0.21.0"
 lazy_static = "1.4.0"
 reqwest = { version = "0.11.16", features = ["stream"] }
@@ -26,11 +25,13 @@ tokio-util = "0.7.7"
 tokio = { version = "1", features = ["full"] }
 futures-util = "0.3.27"
 sysinfo = "0.28.4"
+anyhow = "1.0.70"
+log = "0.4.17"
+fern = { version = "0.6.2 ", features = ["colored"] }
+pretty_date = "0.1.2"
+chrono = "0.4.24"
+colored = "2.0.0"
 
 [features]
-# by default Tauri runs in production mode
-# when `tauri dev` runs it is executed with `cargo run --no-default-features` if `devPath` is an URL
 default = ["custom-protocol"]
-# this feature is used used for production builds where `devPath` points to the filesystem
-# DO NOT remove this
-custom-protocol = ["tauri/custom-protocol"]
+custom-protocol = ["tauri/custom-protocol"] # DO NOT REMOVE THIS

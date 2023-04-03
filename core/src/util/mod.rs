@@ -1,3 +1,4 @@
+pub mod consts;
 pub trait Shift<T> {
     fn shift(&mut self) -> Option<T>;
 }

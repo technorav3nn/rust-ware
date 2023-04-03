@@ -1,43 +1,17 @@
 use std::{
-    process::{Child, Command},
+    process::{Child, Command, Stdio},
     sync::Mutex,
 };
 
+use anyhow::bail;
 use serde::{Deserialize, Serialize};
 use sysinfo::{Pid, PidExt, ProcessExt, System, SystemExt};
 
 lazy_static! {
-    #[allow(non_upper_case_globals)]
-    static ref sys_info: Mutex<System> = {
+    static ref SYS_INFO: Mutex<System> = {
         let unsafe_sys_info = System::new_all();
         Mutex::new(unsafe_sys_info)
     };
-}
-
-pub struct Injector {
-    pid: u32,
-}
-
-impl Injector {
-    pub fn inject(pid: usize, args: Vec<String>) -> Result<Child, std::io::Error> {
-        let mut sys = sys_info.lock().unwrap();
-        sys.refresh_processes();
-
-        match sys.process(Pid::from(pid)) {
-            Some(process) => {
-                process.kill();
-                let child = Command::new("/Applications/Roblox.app/Contents/MacOS/RobloxPlayer")
-                    .args(args)
-                    .spawn()?;
-
-                Ok(child)
-            }
-            None => Err(std::io::Error::new(
-                std::io::ErrorKind::Other,
-                "Process not found!",
-            )),
-        }
-    }
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -47,12 +21,34 @@ pub struct Process {
     pub arguments: Vec<String>,
 }
 
+pub fn inject(pid: usize, args: Vec<String>) -> anyhow::Result<Child> {
+    let mut sys = SYS_INFO.lock().unwrap();
+    sys.refresh_processes();
+
+    match sys.process(Pid::from(pid)) {
+        Some(process) => {
+            process.kill();
+            let child = Command::new("/Applications/Roblox.app/Contents/MacOS/RobloxPlayer")
+                .args(args)
+                .env(
+                    "DYLD_INSERT_LIBRARIES",
+                    "/Users/Shared/ScriptWare/libScriptWare.dylib",
+                )
+                .stdin(Stdio::null())
+                .spawn()?;
+
+            Ok(child)
+        }
+        None => bail!("Process not found!"),
+    }
+}
+
 /// Gets all the Roblox processes running on the system.
 /// Returns a vector of  `Process`es.
 pub fn get_roblox_processes() -> Vec<Process> {
     let mut result: Vec<Process> = Vec::new();
 
-    let mut sys = sys_info.lock().unwrap();
+    let mut sys = SYS_INFO.lock().unwrap();
 
     sys.refresh_processes();
 

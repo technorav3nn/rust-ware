@@ -1,10 +1,12 @@
 use std::collections::HashMap;
-use std::error::Error;
 use std::str::FromStr;
 
+use anyhow::Context;
+
+use tauri::async_runtime::TokioJoinHandle;
 use tokio::net::{TcpListener, TcpStream};
 
-use crate::trait_impl::Shift;
+use crate::util::Shift;
 
 #[derive(Debug, PartialEq)]
 pub enum CommEvents {
@@ -24,7 +26,7 @@ pub enum SocketEvents {
 impl FromStr for CommEvents {
     type Err = ();
 
-    fn from_str(input: &str) -> Result<Self, Self::Err> {
+    fn from_str(input: &str) -> anyhow::Result<Self, Self::Err> {
         match input {
             "H" => Ok(CommEvents::Hello),
             "S" => Ok(CommEvents::ScriptAck),
@@ -38,7 +40,7 @@ impl FromStr for CommEvents {
 impl FromStr for SocketEvents {
     type Err = ();
 
-    fn from_str(input: &str) -> Result<Self, Self::Err> {
+    fn from_str(input: &str) -> anyhow::Result<Self, Self::Err> {
         match input {
             "s" => Ok(SocketEvents::RunScript),
             "c" => Ok(SocketEvents::ConsoleSend),
@@ -54,8 +56,8 @@ pub struct CommsServer {
 }
 
 impl CommsServer {
-    pub async fn new() -> Result<Self, Box<dyn std::error::Error>> {
-        let listener = TcpListener::bind("127.0.0.1:8080").await?;
+    pub async fn new() -> anyhow::Result<Self> {
+        let listener = TcpListener::bind("127.0.0.1:56914").await?;
 
         Ok(Self {
             listener,
@@ -64,30 +66,29 @@ impl CommsServer {
     }
 
     /// Accepts a new connection
-    pub async fn accept(&mut self) -> Result<(), Box<dyn Error>> {
-        let (socket, _) = self.listener.accept().await?;
+    pub async fn accept(&mut self) -> anyhow::Result<TokioJoinHandle<anyhow::Result<()>>> {
+        let (_socket, _) = self.listener.accept().await?;
 
-        tokio::spawn(async move {
+        Ok(tokio::spawn(async move {
             let buf = vec![0; 1024];
 
             loop {
-                let buf_str = String::from_utf8(buf.clone()).unwrap();
+                let buf_str = String::from_utf8(buf.clone())?;
                 let mut split_zero = buf_str.split("\0").collect::<Vec<&str>>();
 
                 while split_zero.len() > 1 {
-                    let msg = &split_zero.shift().expect("Failed to get message");
-                    println!("GOT MESSAGE: {}", msg);
+                    let msg = &split_zero.shift().context("Couldn't shift split_zero!")?;
+
+                    trace!("[Comms] Got message: {}", msg);
 
                     match &msg[0..1] {
                         "H" => {
-                            println!("msg full: {}", msg);
+                            debug!("[Comms] Got H Message");
                         }
-                        _ => println!(),
+                        _ => debug!("[Comms] Got unknown message: {}", msg),
                     }
                 }
             }
-        });
-
-        Ok(())
+        }))
     }
 }

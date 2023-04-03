@@ -9,7 +9,7 @@ use base64::{engine::general_purpose, Engine};
 use sw_auth::{AuthCodes, Authenticator};
 use tauri::api::process::{Command, Output};
 
-use crate::consts;
+use crate::util::consts;
 
 lazy_static! {
     static ref AUTH: Mutex<Authenticator> = {
@@ -34,23 +34,33 @@ pub fn authenticate_user(username: &str, password: &str) -> Result<String, AuthC
     match auth.authenticate(stdout) {
         Ok((success, code, token)) => {
             if success {
-                println!("Success! Code: {:?}, Token: {}", code, token);
-                write_to_auth_file(&token);
-                Ok(token)
-            } else {
-                println!("Failure! Code: {:?}", code);
-                Err(code)
+                debug!("[Auth] Attempting Authentication...");
+                if let Err(why) = write_to_auth_file(&token) {
+                    error!("[Auth] Error writing to auth file: {:?}", why);
+
+                    return Err(AuthCodes::UnknownError(
+                        "Error writing to auth file".to_string(),
+                    ));
+                }
+                debug!("[Auth] Successfully authenticated!");
+
+                return Ok(token);
             }
+
+            Err(code)
         }
-        Err(e) => panic!("Error in auth with code: {:?}", e),
+        Err(e) => {
+            error!("[Auth] Error in auth with code: {:?}", e);
+            Err(AuthCodes::UnknownError("Unknown error".to_string()))
+        }
     }
 }
 
-fn write_to_auth_file(token: &str) {
-    let mut file = File::create(consts::SW_IPC_AUTH_PATH).expect("Unable to create file");
-    file.write_all(token.as_bytes())
-        .expect("Unable to write data");
+fn write_to_auth_file(token: &str) -> anyhow::Result<()> {
+    let mut file = File::create(consts::SW_IPC_AUTH_PATH)?;
+    file.write_all(token.as_bytes())?;
 
-    fs::set_permissions(consts::SW_IPC_AUTH_PATH, fs::Permissions::from_mode(0o777))
-        .expect("Unable to set permissions");
+    fs::set_permissions(consts::SW_IPC_AUTH_PATH, fs::Permissions::from_mode(0o777))?;
+
+    Ok(())
 }

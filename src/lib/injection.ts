@@ -85,14 +85,10 @@ export async function inject() {
 
         console.log("Killed Roblox!");
 
-        let newCmd = process.command!.replace(
-            "/Applications/Roblox.app/Contents/MacOS/RobloxPlayer",
-            ""
-        );
-
-        spawnRoblox(newCmd);
-
-        process = null;
+        await invoke("try_inject", {
+            pid: process.pid,
+            args: process.arguments.slice(1),
+        });
     }
 
     console.log("Roblox is already running!");
