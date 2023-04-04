@@ -52,8 +52,8 @@ fn initalize_logger() -> anyhow::Result<()> {
     Ok(())
 }
 
-async fn start_tcp_pipe() -> anyhow::Result<()> {
-    let mut server = CommsServer::new().await?;
+async fn start_tcp_pipe(handle: tauri::AppHandle) -> anyhow::Result<()> {
+    let server = CommsServer::new(handle)?;
     info!(
         "[CommsServer] TcpListener listening on port {}",
         server
@@ -65,14 +65,9 @@ async fn start_tcp_pipe() -> anyhow::Result<()> {
             .underline()
     );
     loop {
-        if let Err(why) = server.accept().await {
+        if let Err(why) = &server.clone().accept() {
             error!("Error accepting connection: {}", why);
         }
-
-        info!(
-            "Accepted new connection! Current amount: {}",
-            server.connections.len()
-        );
     }
 }
 
@@ -84,16 +79,17 @@ async fn main() {
 
     info!("Initalizing application...");
 
-    info!("Initalizing TCP Server...");
-    tokio::spawn(async move {
-        if let Err(why) = start_tcp_pipe().await {
-            error!("Error starting TCP Server: {}", why);
-        }
-    });
-
     tauri::Builder::default()
         .setup(|app| {
             let _window = app.get_window("main").unwrap();
+            let handle = app.handle();
+
+            info!("Initalizing TCP Server...");
+            tokio::spawn(async move {
+                if let Err(why) = start_tcp_pipe(handle).await {
+                    error!("Error starting TCP Server: {}", why);
+                }
+            });
 
             info!("Setup complete. Application started.");
 
