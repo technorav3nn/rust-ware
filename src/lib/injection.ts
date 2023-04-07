@@ -1,5 +1,5 @@
 import { Command } from "@tauri-apps/api/shell";
-import { globalStore } from "./state";
+import { authStore } from "../store/auth";
 import { invoke } from "@tauri-apps/api/tauri";
 
 interface GetProcessesResult {
@@ -61,7 +61,7 @@ function killProcess(pid: number) {
 }
 
 export async function inject() {
-    const { authToken } = globalStore.getState();
+    const { authToken } = authStore.getState();
 
     if (!authToken) {
         throw new Error("You are not logged in!");

@@ -1,38 +1,72 @@
-import { Modal } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
-import { useEffect } from "react";
-import { AuthForm } from "../components/LoginModal/AuthForm";
+import { useEffect, useRef, WheelEvent } from "react";
+import { useAuthStore } from "../store/auth";
+import { useRouter } from "next/router";
+import Editor, { useMonaco } from "@monaco-editor/react";
+import { Box, ScrollArea, Tabs, useMantineTheme } from "@mantine/core";
 
-function App() {
-    const [modalOpened, { open, close }] = useDisclosure(true, {
-        onClose: () => console.log("Modal closed"),
-    });
+function Index() {
+    const authState = useAuthStore();
+    const theme = useMantineTheme();
+    const scrollAreaRef = useRef<HTMLDivElement>(null);
 
-    const onSubmit = (username: string, password: string) => {
-        console.log("Form submitted: ", username, password);
-        close();
+    const onMouseWheel = (e: WheelEvent) => {
+        if (scrollAreaRef.current) {
+            scrollAreaRef.current.scrollLeft += e.deltaY;
+        }
     };
 
     useEffect(() => {
-        setTimeout(() => open());
+        document.body.style.overflow = "hidden";
+        return () => {
+            document.body.style.overflow = "auto";
+        };
     }, []);
 
     return (
-        <>
-            <Modal
-                opened={modalOpened}
-                onClose={close}
-                title="Authentication"
-                closeOnClickOutside={false}
-                closeOnEscape={false}
-                withCloseButton={false}
-                centered
-                exitTransitionDuration={1000}
+        <Box sx={{ overflow: "hidden" }} pt={5}>
+            <ScrollArea
+                onWheel={(e) => onMouseWheel(e)}
+                viewportRef={scrollAreaRef}
+                type="never"
             >
-                <AuthForm close={close} onSubmit={onSubmit} />
-            </Modal>
-        </>
+                <Tabs
+                    defaultValue="first"
+                    styles={{
+                        tabLabel: {
+                            whiteSpace: "nowrap",
+                        },
+                        tabsList: {
+                            flexWrap: "nowrap",
+                        },
+                        tab: {
+                            border: `1px solid ${theme.colors.gray[8]}`,
+                        },
+                    }}
+                    variant="pills"
+                    color="blue"
+                    mb={10}
+                >
+                    <Tabs.List>
+                        <Tabs.Tab value="first">First tab</Tabs.Tab>
+                        <Tabs.Tab value="second">Second tab</Tabs.Tab>
+                        <Tabs.Tab value="third">Third tab</Tabs.Tab>
+                        <Tabs.Tab value="4">2b</Tabs.Tab>
+                        <Tabs.Tab value="5">Thi234rd tab</Tabs.Tab>
+                        <Tabs.Tab value="6">23423 tab</Tabs.Tab>
+                        <Tabs.Tab value="7">234 tab</Tabs.Tab>
+                        <Tabs.Tab value="8">Thi22rd tab</Tabs.Tab>
+                        <Tabs.Tab value="9">11 tab</Tabs.Tab>
+                        <Tabs.Tab value="20">55 tab</Tabs.Tab>
+
+                        <Tabs.Tab value="1234">212234 tab</Tabs.Tab>
+                        <Tabs.Tab value="2314">1234 tab</Tabs.Tab>
+                        <Tabs.Tab value="12312314">Thi213rd tab</Tabs.Tab>
+                    </Tabs.List>
+                </Tabs>
+            </ScrollArea>
+            <Editor language="lua" theme="vs-dark" height="90vh" />
+        </Box>
     );
 }
 
-export default App;
+export default Index;

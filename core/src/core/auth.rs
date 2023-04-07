@@ -51,7 +51,7 @@ pub fn authenticate_user(username: &str, password: &str) -> Result<String, AuthC
         }
         Err(e) => {
             error!("[Auth] Error in auth with code: {:?}", e);
-            Err(AuthCodes::UnknownError("Unknown error".to_string()))
+            Err(e)
         }
     }
 }
