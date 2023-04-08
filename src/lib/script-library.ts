@@ -39,11 +39,12 @@ namespace ScriptLibraryRoutes {
 
 export async function searchScript(
     name: string
-): Promise<ScriptLibraryScripts[]> {
+): Promise<ScriptLibraryScripts[] | undefined> {
     const url = ScriptLibraryRoutes.searchScript(name);
     console.log(url);
 
     const response = await authFetch(url);
+    if (!response) return;
 
     return await response.json();
 }

@@ -1,6 +1,7 @@
-import { Button, Container } from "@mantine/core";
-import { AuthLayout } from "../views/AuthPage";
-import { useAuthStore } from "../store/auth";
+import { Container } from "@mantine/core";
+import { useEffect } from "react";
+import { openModal } from "@mantine/modals";
+import { AuthForm } from "../components/LoginModal/AuthForm";
 
 function Index() {
     return (
@@ -10,9 +11,26 @@ function Index() {
     );
 }
 
-function App() {
-    const authStore = useAuthStore();
+function AuthLayout() {
+    const openAuthModal = () => {
+        openModal({
+            title: "You must be authenticated to continue.",
+            withCloseButton: false,
+            closeOnClickOutside: false,
+            closeOnEscape: false,
+            centered: true,
+            children: <AuthForm />,
+        });
+    };
 
+    useEffect(() => {
+        openAuthModal();
+    }, []);
+
+    return <></>;
+}
+
+function App() {
     return (
         <>
             <AuthLayout />

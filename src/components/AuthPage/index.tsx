@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { AuthForm } from "../../components/LoginModal/AuthForm";
+import { AuthForm } from "../LoginModal/AuthForm";
 import { useAuthStore } from "../../store/auth";
 import { invoke } from "@tauri-apps/api/tauri";
 import { closeAllModals, openModal } from "@mantine/modals";

@@ -7,5 +7,9 @@ export function PageContainer({
     children: React.ReactNode;
     my?: SpacingValue;
 }) {
-    return <Container my={my ?? "md"}>{children}</Container>;
+    return (
+        <Container data-tauri-drag-region my={my ?? "md"}>
+            {children}
+        </Container>
+    );
 }

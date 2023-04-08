@@ -81,8 +81,8 @@ const NavbarLink = ({
         <Tooltip
             label={label}
             position="right"
-            transition={"slide-right"}
-            transitionDuration={200}
+            color="blue"
+            transitionProps={{ transition: "slide-right", duration: 200 }}
             sx={{
                 transform: hovered ? "translateX(100px)" : "",
             }}
@@ -108,35 +108,49 @@ const NavbarLink = ({
 };
 
 export const AppNavbar = () => (
-    <Navbar
-        width={{ base: 80 }}
-        p="md"
-        sx={(theme) => ({
-            alignItems: "center",
-        })}
-    >
-        <Navbar.Section grow>
-            <Stack justify="center" spacing={4}>
-                <NavbarLink icon={MdCode} label="Editor" to="/" />
-                <NavbarLink icon={MdTerminal} label="Console" to="/console" />
-                <NavbarLink
-                    icon={MdDescription}
-                    label="Scripts"
-                    to="/scripts"
-                />
-            </Stack>
-        </Navbar.Section>
-        <Navbar.Section>
-            <Stack justify="center" spacing={4}>
-                <NavbarLink icon={MdSettings} label="Settings" to="/settings" />
-                {/* normal buttons, not links below */}
-                <NavbarLink
-                    label="Execute"
-                    onClick={() => {}}
-                    iconSize={28}
-                    icon={HiPlay}
-                />
-            </Stack>
-        </Navbar.Section>
-    </Navbar>
+    <div data-tauri-drag-region>
+        <Navbar
+            width={{ base: 70 }}
+            p="md"
+            sx={(theme) => ({
+                alignItems: "center",
+            })}
+            pt={30}
+        >
+            <Navbar.Section grow data-tauri-drag-region>
+                <Stack justify="center" spacing={4}>
+                    <div data-tauri-drag-region>
+                        <NavbarLink icon={MdCode} label="Editor" to="/" />
+                        <NavbarLink
+                            icon={MdTerminal}
+                            label="Console"
+                            to="/console"
+                        />
+                        <NavbarLink
+                            icon={MdDescription}
+                            label="Scripts"
+                            to="/scripts"
+                        />
+                    </div>
+                </Stack>
+            </Navbar.Section>
+            <Navbar.Section>
+                <div data-tauri-drag-region />
+                <Stack justify="center" spacing={4}>
+                    <NavbarLink
+                        icon={MdSettings}
+                        label="Settings"
+                        to="/settings"
+                    />
+                    {/* normal buttons, not links below */}
+                    <NavbarLink
+                        label="Execute"
+                        onClick={() => {}}
+                        iconSize={28}
+                        icon={HiPlay}
+                    />
+                </Stack>
+            </Navbar.Section>
+        </Navbar>
+    </div>
 );

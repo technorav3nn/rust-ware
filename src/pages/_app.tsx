@@ -4,11 +4,10 @@ import "../styles/global.css";
 import NProgress from "nprogress";
 import type { AppProps } from "next/app";
 import Head from "next/head";
-import { AppShell, MantineProvider } from "@mantine/core";
-import { AppNavbar } from "../views/AppLayout";
+import { AppShell, Header, MantineProvider } from "@mantine/core";
+import { AppNavbar } from "../components/AppLayout";
 import dynamic from "next/dynamic";
 import { ModalsProvider } from "@mantine/modals";
-import { PageContainer } from "../components/Layout/PageContainer";
 import { AnimatePresence, AnimateSharedLayout, motion } from "framer-motion";
 import { useEffect } from "react";
 import { useAuthStore } from "../store/auth";
@@ -32,6 +31,10 @@ function App(props: AppProps) {
         if (!useAuthStore.getState().authToken && router.pathname !== "/auth") {
             router.push("/auth");
         }
+
+        document
+            .querySelector(".mantine-AppShell-main")
+            ?.setAttribute("data-tauri-drag-region", "");
     }, []);
 
     return (
@@ -58,11 +61,15 @@ function App(props: AppProps) {
                         Button: {},
                     },
                     colorScheme: "dark",
-                    primaryShade: 9,
+                    primaryShade: 7,
                 }}
             >
                 <ModalsProvider>
-                    <AppShell className="fixHeader" navbar={<AppNavbar />}>
+                    <AppShell
+                        className="fixHeader"
+                        navbar={<AppNavbar data-tauri-drag-region />}
+                        data-tauri-drag-region
+                    >
                         <AnimatePresence
                             mode="wait"
                             initial={false}

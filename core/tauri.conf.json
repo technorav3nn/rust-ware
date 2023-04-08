@@ -12,6 +12,9 @@
     },
     "tauri": {
         "allowlist": {
+            "window": {
+                "all": true
+            },
             "shell": {
                 "sidecar": true,
                 "scope": [
@@ -43,13 +46,13 @@
         "bundle": {
             "active": true,
             "category": "Utility",
-            "copyright": "",
+            "copyright": "Death_Blows",
             "externalBin": ["binaries/SWMAuth2"],
             "icon": ["icons/32x32.png", "icons/128x128.png", "icons/icon.ico"],
-            "identifier": "com.rmt.dev",
+            "identifier": "tech.deathblows.rust-ware",
             "longDescription": "",
             "resources": [],
-            "shortDescription": "This is a template app for react-mantine-tauri-template",
+            "shortDescription": "Rust-Ware is a free, open-source, and blazing fast custom UI for Script-Ware M.",
             "targets": ["app"],
             "windows": {
                 "certificateThumbprint": null,
@@ -69,9 +72,10 @@
                 "height": 600,
                 "resizable": true,
                 "fullscreen": false,
-                "transparent": false,
+                "titleBarStyle": "Overlay",
+                "title": "",
                 "decorations": true,
-                "title": "react-mantine-tauri-template"
+                "fileDropEnabled": false
             }
         ]
     }

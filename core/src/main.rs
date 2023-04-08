@@ -82,6 +82,7 @@ async fn main() {
     tauri::Builder::default()
         .setup(|app| {
             let _window = app.get_window("main").unwrap();
+
             let handle = app.handle();
 
             info!("Initalizing TCP Server...");

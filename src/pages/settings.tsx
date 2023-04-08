@@ -1,10 +1,31 @@
-import { SettingsPage } from "../views/SettingsPage";
 import { PageContainer } from "../components/Layout/PageContainer";
+import { SettingsBox } from "../components/SettingsBox";
 
 function Settings() {
     return (
         <PageContainer>
-            <SettingsPage />
+            <SettingsBox
+                title={"Settings"}
+                description={"Script-Ware M Settings"}
+                data={[
+                    {
+                        title: "Auto Inject",
+                        description: "Auto Inject Script-Ware",
+                    },
+                    {
+                        title: "Auto Inject",
+                        description: "Auto Inject Script-Ware",
+                    },
+                    {
+                        title: "Auto Inject",
+                        description: "Auto Inject Script-Ware",
+                    },
+                    {
+                        title: "Auto Inject",
+                        description: "Auto Inject Script-Ware",
+                    },
+                ]}
+            />
         </PageContainer>
     );
 }

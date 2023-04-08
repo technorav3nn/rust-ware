@@ -6,6 +6,7 @@ import {
     Text,
     Divider,
 } from "@mantine/core";
+import { AnimatePresence, motion, stagger } from "framer-motion";
 
 // This is a helper function to convert pixels to rem
 function rem(px: number) {
@@ -47,12 +48,14 @@ interface SwitchesCardProps {
         title: string;
         description: string;
     }[];
+    animationDelay?: number;
 }
 
 export function SettingsBox({ title, description, data }: SwitchesCardProps) {
     const { classes } = useStyles();
+    const animationDelay = stagger(0.1, { startDelay: 0.2 });
 
-    const items = data.map((item) => (
+    const items = data.map((item, i) => (
         <Group position="apart" className={classes.item} noWrap spacing="xl">
             <div>
                 <Text sx={{ fontWeight: 700 }}>{item.title}</Text>
