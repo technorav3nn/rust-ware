@@ -17,6 +17,7 @@ use crate::commands::{
     authenticate, download_file, get_processes, get_version, greet, kill_process, try_inject,
 };
 use crate::core::comms::CommsServer;
+use crate::core::lsp_proxy::start_proxy;
 use crate::core::state::AuthState;
 
 fn initalize_logger() -> anyhow::Result<()> {
@@ -78,6 +79,8 @@ async fn main() {
     }
 
     info!("Initalizing application...");
+
+    start_proxy().unwrap();
 
     tauri::Builder::default()
         .setup(|app| {

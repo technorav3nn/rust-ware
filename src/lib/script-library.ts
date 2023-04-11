@@ -1,9 +1,7 @@
-import { SW_API_BASE_URL } from "./constants";
-import { authFetch } from "./util";
+import { scriptWareFetch } from "./fetchers/script-ware";
+import { buildSearchScriptRoute } from "./util/routes";
 
-const scriptCache = new Map<string, string>();
-
-export interface ScriptLibraryScripts {
+export interface ScriptLibraryScript {
     total_saves: number;
     verified_publisher: boolean;
     saved: boolean;
@@ -27,23 +25,15 @@ export interface ScriptLibraryScripts {
 
 export interface ScriptLibrarySearchResult {
     success: boolean;
-    data: ScriptLibraryScripts[];
-}
-
-namespace ScriptLibraryRoutes {
-    export const searchScript = (name: string) =>
-        `${SW_API_BASE_URL}/getglobalscripts/search/${encodeURIComponent(
-            name
-        )}` as const;
+    data: ScriptLibraryScript[];
 }
 
 export async function searchScript(
     name: string
-): Promise<ScriptLibraryScripts[] | undefined> {
-    const url = ScriptLibraryRoutes.searchScript(name);
-    console.log(url);
+): Promise<ScriptLibraryScript[] | undefined> {
+    const url = buildSearchScriptRoute(name);
 
-    const response = await authFetch(url);
+    const response = await scriptWareFetch(url);
     if (!response) return;
 
     return await response.json();

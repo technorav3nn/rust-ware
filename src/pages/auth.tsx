@@ -1,17 +1,9 @@
 import { Container } from "@mantine/core";
 import { useEffect } from "react";
 import { openModal } from "@mantine/modals";
-import { AuthForm } from "../components/LoginModal/AuthForm";
+import { AuthForm } from "../components/AuthModal/AuthModal";
 
-function Index() {
-    return (
-        <Container>
-            <h1>Waiting for authentication to be complete...</h1>
-        </Container>
-    );
-}
-
-function AuthLayout() {
+function Auth() {
     const openAuthModal = () => {
         openModal({
             title: "You must be authenticated to continue.",
@@ -33,8 +25,10 @@ function AuthLayout() {
 function App() {
     return (
         <>
-            <AuthLayout />
-            <Index />
+            <Auth />
+            <Container>
+                <h1>Waiting for authentication to be complete...</h1>
+            </Container>
         </>
     );
 }

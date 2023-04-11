@@ -1,9 +1,9 @@
-import { PageContainer } from "../components/Layout/PageContainer";
-import { SettingsBox } from "../components/SettingsBox";
+import { Container } from "../components/Layout/Container";
+import { SettingsBox } from "../components/Settings/OptionsContainer/OptionsContainer";
 
 function Settings() {
     return (
-        <PageContainer>
+        <Container>
             <SettingsBox
                 title={"Settings"}
                 description={"Script-Ware M Settings"}
@@ -26,7 +26,7 @@ function Settings() {
                     },
                 ]}
             />
-        </PageContainer>
+        </Container>
     );
 }
 

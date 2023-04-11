@@ -1,16 +1,12 @@
 import "nprogress/nprogress.css";
-import "../styles/global.css";
 
-import NProgress from "nprogress";
-import type { AppProps } from "next/app";
-import Head from "next/head";
-import { AppShell, Header, MantineProvider } from "@mantine/core";
-import { AppNavbar } from "../components/AppLayout";
-import dynamic from "next/dynamic";
+import { AppShell, MantineProvider } from "@mantine/core";
 import { ModalsProvider } from "@mantine/modals";
-import { AnimatePresence, AnimateSharedLayout, motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { useEffect } from "react";
+import { Navbar } from "../components/Layout/Navbar/Navbar";
 import { useAuthStore } from "../store/auth";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 
 const ANIMATION_VARIANTS = {
     hidden: { opacity: 0, x: 0, y: -30 },
@@ -18,18 +14,16 @@ const ANIMATION_VARIANTS = {
     exit: { opacity: 0, x: 0, y: 30 },
 };
 
-function App(props: AppProps) {
-    const { Component, pageProps, router } = props;
+export default function App() {
+    const navigate = useNavigate();
+    const location = useLocation();
 
     useEffect(() => {
-        router.events.on("routeChangeStart", () => NProgress.start());
-        router.events.on("routeChangeComplete", () => NProgress.done());
-        router.events.on("routeChangeError", () => NProgress.done());
-    });
-
-    useEffect(() => {
-        if (!useAuthStore.getState().authToken && router.pathname !== "/auth") {
-            router.push("/auth");
+        if (
+            !useAuthStore.getState().authToken &&
+            location.pathname !== "/auth"
+        ) {
+            navigate("/auth");
         }
 
         document
@@ -39,14 +33,6 @@ function App(props: AppProps) {
 
     return (
         <>
-            <Head>
-                <title>Page title</title>
-                <meta
-                    name="viewport"
-                    content="minimum-scale=1, initial-scale=1, width=device-width"
-                />
-            </Head>
-
             <MantineProvider
                 withGlobalStyles
                 withNormalizeCSS
@@ -67,31 +53,24 @@ function App(props: AppProps) {
                 <ModalsProvider>
                     <AppShell
                         className="fixHeader"
-                        navbar={<AppNavbar data-tauri-drag-region />}
+                        navbar={<Navbar data-tauri-drag-region />}
                         data-tauri-drag-region
                     >
-                        <AnimatePresence
-                            mode="wait"
-                            initial={false}
-                            onExitComplete={() => window.scrollTo(0, 0)}
-                        >
+                        <AnimatePresence mode="wait" initial={false}>
                             <motion.main
                                 layoutId="main"
-                                key={router.route}
-                                initial="hidden"
+                                key={location.key}
                                 layout="position"
-                                animate="enter"
-                                exit="exit"
+                                initial="initial"
+                                animate="in"
+                                exit="out"
                                 variants={ANIMATION_VARIANTS}
                                 transition={{
                                     duration: 0.2,
                                     type: "easeInOut",
                                 }}
-                                onAnimationComplete={() =>
-                                    window.scrollTo(0, 0)
-                                }
                             >
-                                <Component {...pageProps} />
+                                <Outlet />
                             </motion.main>
                         </AnimatePresence>
                     </AppShell>
@@ -100,7 +79,3 @@ function App(props: AppProps) {
         </>
     );
 }
-
-export default dynamic(() => Promise.resolve(App), {
-    ssr: false,
-});

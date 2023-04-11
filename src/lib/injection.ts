@@ -1,12 +1,7 @@
 import { Command } from "@tauri-apps/api/shell";
 import { authStore } from "../store/auth";
 import { invoke } from "@tauri-apps/api/tauri";
-
-interface GetProcessesResult {
-    pid?: number;
-    command?: string;
-    arguments: string[];
-}
+import { GetProcessesResult } from "./util/process";
 
 function removeCodesign() {
     try {
@@ -28,32 +23,22 @@ function removeCodesign() {
 }
 
 function spawnRoblox(args: string) {
-    console.log("Spawning Roblox with args", args);
-    console.log("zsh", [
-        "-c",
-        `"/Applications/Roblox.app/Contents/MacOS/RobloxPlayer" "${args}"`,
-    ]);
+    console.log("[spawnRoblox] Spawning roblox.");
+
     const command = new Command("sh", [
         "-c",
         `"/Applications/Roblox.app/Contents/MacOS/RobloxPlayer" "${args}"`,
     ]);
+
     command.on("close", (code) => {
-        console.log("Closed with code", code);
+        console.log("[spawnRoblox] Roblox Closed with code", code);
     });
 
     command.on("error", (error) => {
-        console.log("Error", error);
+        console.log("[spawnRoblox] Stderr Error", error);
     });
 
-    command.stdout.on("data", (data) => {
-        console.log("stdout", data.toString());
-    });
-
-    command.stderr.on("data", (data) => {
-        console.log("stderr", data.toString());
-    });
-
-    command.spawn();
+    return command.spawn();
 }
 
 function killProcess(pid: number) {
@@ -78,12 +63,11 @@ export async function inject() {
             await new Promise((resolve) => setTimeout(resolve, 1000));
         }
 
-        console.log("Roblox started!");
-        console.log(process);
+        console.log("[injection] Roblox started!");
 
         killProcess(process.pid!);
 
-        console.log("Killed Roblox!");
+        console.log("[injection] Killed Roblox!");
 
         await invoke("try_inject", {
             pid: process.pid,
@@ -91,7 +75,7 @@ export async function inject() {
         });
     }
 
-    console.log("Roblox is already running!");
+    console.warn("[injection] Roblox is already running!");
 }
 
 export function downloadFile(options: { url: string; destination: string }) {

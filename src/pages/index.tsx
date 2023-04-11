@@ -2,7 +2,7 @@ import { useEffect, useRef, WheelEvent } from "react";
 import { useAuthStore } from "../store/auth";
 import Editor, { OnMount } from "@monaco-editor/react";
 import { Box, ScrollArea, Tabs, useMantineTheme } from "@mantine/core";
-import { setupTheme } from "../lib/edtior";
+import { setupTheme } from "../lib/setup/editor";
 
 function Index() {
     const authState = useAuthStore();
