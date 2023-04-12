@@ -36,5 +36,6 @@ export async function searchScript(
     const response = await scriptWareFetch(url);
     if (!response) return;
 
-    return await response.json();
+    // eslint-disable-next-line consistent-return
+    return response.json();
 }

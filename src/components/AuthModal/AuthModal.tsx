@@ -1,11 +1,11 @@
 import { Group, TextInput, PasswordInput, Button } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconLock } from "@tabler/icons-react";
-import { useAuthStore } from "../../store/auth";
 import { closeAllModals } from "@mantine/modals";
 import { invoke } from "@tauri-apps/api/tauri";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuthStore } from "../../store/auth";
 
 export function AuthForm() {
     const form = useForm({

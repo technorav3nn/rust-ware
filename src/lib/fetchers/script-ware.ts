@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { authStore } from "../../store/auth";
 import { SW_API_BASE_URL } from "../util/constants";
+import { wait } from "../util";
 
 export async function scriptWareFetch<T extends string>(
     url: `${typeof SW_API_BASE_URL}${T}`,
@@ -28,8 +29,6 @@ export async function scriptWareFetch<T extends string>(
         return;
     }
 
+    // eslint-disable-next-line consistent-return
     return res;
 }
-
-export const wait = async (ms: number) =>
-    await new Promise((r) => setTimeout(r, ms));

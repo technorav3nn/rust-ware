@@ -10,12 +10,12 @@ import {
 import { ModalsProvider } from "@mantine/modals";
 import { Suspense, useEffect } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import { Notifications } from "@mantine/notifications";
 import { Navbar } from "../components/Layout/Navbar/Navbar";
 import { useAuthStore } from "../store/auth";
-import { Notifications } from "@mantine/notifications";
 
 const theme: MantineThemeOverride = {
-    globalStyles: (_theme) => ({
+    globalStyles: () => ({
         body: {
             backgroundColor: "transparent",
         },
@@ -27,6 +27,17 @@ const theme: MantineThemeOverride = {
     colorScheme: "dark",
     primaryShade: 7,
 };
+
+const appShellEditorPage = {
+    main: {
+        paddingBottom: "0px",
+        paddingTop: "0px",
+        paddingRight: "0px",
+        paddingLeft: "calc(var(--mantine-navbar-width, 0px))",
+    },
+};
+
+const appShellGlobal = {};
 
 const Providers = ({ children }: { children: React.ReactNode }) => (
     <MantineProvider withGlobalStyles withNormalizeCSS theme={theme}>
@@ -52,17 +63,25 @@ export default function App() {
             navigate("/auth");
         }
 
-        document
-            .querySelector(".mantine-AppShell-main")
-            ?.setAttribute("data-tauri-drag-region", "");
+        const appshellMain: HTMLDivElement | null = document.querySelector(
+            ".mantine-AppShell-main"
+        );
+        if (appshellMain) {
+            appshellMain.setAttribute("data-tauri-drag-region", "");
+        }
     }, []);
 
     return (
         <Providers>
             <AppShell
-                className="fixHeader"
                 navbar={<Navbar data-tauri-drag-region />}
                 data-tauri-drag-region
+                styles={{
+                    root:
+                        location.pathname === "/"
+                            ? appShellEditorPage
+                            : appShellGlobal,
+                }}
             >
                 <Notifications />
                 <Suspense fallback={<Loading />}>

@@ -1,8 +1,4 @@
-import {
-    createStyles,
-    SegmentedControl,
-    SegmentedControlProps,
-} from "@mantine/core";
+import { SegmentedControl, SegmentedControlProps } from "@mantine/core";
 import { useStyles } from "./index.styles";
 
 export function StyledSegmentedControl(props: SegmentedControlProps) {

@@ -8,7 +8,6 @@ interface SwitchesCardProps {
         title: string;
         description: string;
     }[];
-    animationDelay?: number;
 }
 
 export function SettingsBox({ title, description, data }: SwitchesCardProps) {

@@ -1,48 +1,43 @@
 import { Command } from "@tauri-apps/api/shell";
-import { authStore } from "../store/auth";
 import { invoke } from "@tauri-apps/api/tauri";
+import { authStore } from "../store/auth";
 import { GetProcessesResult } from "./util/process";
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function removeCodesign() {
     try {
-        new Command("/usr/bin/codesign", [
+        const signRemoveRobloxPlayer = new Command("/usr/bin/codesign", [
             "--remove-signature",
             "/Applications/Roblox.app/Contents/MacOS/RobloxPlayer",
         ]);
-        new Command("/usr/bin/codesign", [
+        signRemoveRobloxPlayer.spawn();
+
+        const signRemoveRoblox = new Command("/usr/bin/codesign", [
             "--remove-signature",
             "/Applications/Roblox.app/Contents/MacOS/Roblox.app/Contents/MacOS/Roblox",
         ]);
-        new Command("/usr/bin/codesign", [
+        signRemoveRoblox.spawn();
+
+        const signRemoveRobloxSecond = new Command("/usr/bin/codesign", [
             "--remove-signature",
             "/Applications/Roblox.app/Contents/MacOS/Roblox.app/Contents/MacOS/Roblox",
         ]);
+        signRemoveRobloxSecond.spawn();
     } catch (error) {
         console.error(`Failed to remove codesign: ${error}`);
     }
 }
 
-function spawnRoblox(args: string) {
-    console.log("[spawnRoblox] Spawning roblox.");
-
-    const command = new Command("sh", [
-        "-c",
-        `"/Applications/Roblox.app/Contents/MacOS/RobloxPlayer" "${args}"`,
-    ]);
-
-    command.on("close", (code) => {
-        console.log("[spawnRoblox] Roblox Closed with code", code);
-    });
-
-    command.on("error", (error) => {
-        console.log("[spawnRoblox] Stderr Error", error);
-    });
-
-    return command.spawn();
-}
-
 function killProcess(pid: number) {
     new Command("kill", ["-9", pid.toString()]).spawn();
+}
+
+export async function getRobloxProcesses(): Promise<GetProcessesResult[]> {
+    return invoke("get_processes");
+}
+
+export function downloadFile(options: { url: string; destination: string }) {
+    return invoke("download-file", options);
 }
 
 export async function inject() {
@@ -58,8 +53,10 @@ export async function inject() {
     if (!process) {
         while (!process) {
             console.log("Waiting for Roblox to start...");
-            process = (await getRobloxProcesses())[0];
+            // eslint-disable-next-line no-await-in-loop
+            [process] = await getRobloxProcesses();
 
+            // eslint-disable-next-line no-promise-executor-return, no-await-in-loop
             await new Promise((resolve) => setTimeout(resolve, 1000));
         }
 
@@ -76,12 +73,4 @@ export async function inject() {
     }
 
     console.warn("[injection] Roblox is already running!");
-}
-
-export function downloadFile(options: { url: string; destination: string }) {
-    return invoke("download-file", options);
-}
-
-export async function getRobloxProcesses(): Promise<GetProcessesResult[]> {
-    return invoke("get_processes");
 }

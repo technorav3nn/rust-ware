@@ -14,11 +14,11 @@ import { IconDownload } from "@tabler/icons-react";
 interface ScriptModalProps {
     image: string;
     title: string;
-    author: string;
     saves: number;
+    author: string;
 }
 
-export function ScriptModal({ image, title, author, saves }: ScriptModalProps) {
+export function ScriptModal({ image, title, saves, author }: ScriptModalProps) {
     const theme = useMantineTheme();
 
     const handleTogglePlayed = async () => {
@@ -67,6 +67,7 @@ export function ScriptModal({ image, title, author, saves }: ScriptModalProps) {
                             Lorem ipsum dolor sit amet, consectetur adipiscing
                             elit. Sed euismod, nisl nec tincidunt lacinia, est
                             nisl aliquam nisl, eget aliquam nisl nisl sit amet
+                            {author}
                         </Text>
                     </Stack>
                 </Stack>

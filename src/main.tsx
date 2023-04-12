@@ -1,3 +1,6 @@
+import "nprogress/nprogress.css";
+// import "./styles/global.css";
+
 import { createRoot } from "react-dom/client";
 import { Routes } from "@generouted/react-router";
 

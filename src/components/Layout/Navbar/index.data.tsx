@@ -1,8 +1,8 @@
 import { MdCode, MdTerminal, MdDescription, MdSettings } from "react-icons/md";
-import { NavbarLink } from "./Navbar";
 import { HiPlay } from "react-icons/hi2";
 
 const actions = {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     execute: (_e: React.MouseEvent) => {
         console.log("Execute");
     },

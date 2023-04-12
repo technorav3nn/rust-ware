@@ -1,0 +1,23 @@
+{
+    "extends": ["mantine", "plugin:storybook/recommended"],
+    "overrides": [
+        {
+            "files": ["**/?(*.)+(spec|test).[jt]s?(x)"],
+            "extends": ["plugin:testing-library/react"]
+        }
+    ],
+    "parserOptions": {
+        "project": "./tsconfig.json"
+    },
+    "rules": {
+        "react/react-in-jsx-scope": "off",
+        "react/jsx-indent-props": "off",
+        "@typescript-eslint/no-empty-function": "off",
+        "@typescript-eslint/quotes": [
+            "error",
+            "double",
+            { "avoidEscape": true }
+        ],
+        "no-console": "off"
+    }
+}

@@ -8,7 +8,6 @@ import { useStyles } from "./index.styles";
 interface ImageCardProps {
     image: string;
     title: string;
-    author: string;
     saves: number;
     animationDelay: number;
 }
@@ -31,7 +30,7 @@ export function ScriptListItem({
                 <ScriptModal
                     image={image}
                     title={title}
-                    author={"Unknown"}
+                    author="Unknown"
                     saves={saves}
                 />
             ),

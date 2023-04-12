@@ -1,18 +1,30 @@
-import { useEffect, useRef, WheelEvent } from "react";
-import { useAuthStore } from "../store/auth";
-import Editor, { OnMount } from "@monaco-editor/react";
-import { Box, ScrollArea, Tabs, useMantineTheme } from "@mantine/core";
-import { setupTheme } from "../lib/setup/editor";
+import { useEffect, useRef, useState, WheelEvent } from "react";
+import { OnMount } from "@monaco-editor/react";
+import { CodeEditor } from "../components/Editor/CodeEditor";
+import { TabContainer } from "../components/Editor/Tabs/TabContainer";
+import { Tab } from "../components/Editor/Tabs/Tab";
+
+const tabs = {
+    first: "First taasdfsasdfsdafasdfsadfasdfdsfasdfdafb",
+    second: "Second tab",
+    third: "Third tab",
+    fourth: "Fourth tab",
+    fifth: "Fifth tab",
+    sixth: "Sixth tab",
+    seventh: "Seventh tab",
+    eighth: "Eighth tab",
+    ninth: "Ninth tab",
+    tenth: "Tenth tab",
+};
 
 function Index() {
-    const authState = useAuthStore();
-    const theme = useMantineTheme();
     const scrollAreaRef = useRef<HTMLDivElement>(null);
+    const [activeTab, setActiveTab] = useState("first");
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const onMouseWheel = (e: WheelEvent) => {
+        e.preventDefault();
         if (scrollAreaRef.current) {
-            e.preventDefault();
-
             scrollAreaRef.current.scrollBy({
                 left: e.deltaY < 0 ? -15 : 15,
                 behavior: "smooth",
@@ -20,10 +32,14 @@ function Index() {
         }
     };
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const onEditorMount: OnMount = (editor, monaco) => {
-        setupTheme(monaco);
-        monaco.editor.setTheme("defaultTheme");
+        // setupTheme(monaco);
+        // monaco.editor.setTheme("defaultTheme");
     };
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const onTabClose = (e: React.MouseEvent) => {};
 
     useEffect(() => {
         document.body.style.overflow = "hidden";
@@ -34,58 +50,18 @@ function Index() {
 
     return (
         <>
-            {" "}
-            <Box sx={{ overflow: "hidden" }} pt={5}>
-                <ScrollArea
-                    onWheel={(e) => onMouseWheel(e)}
-                    viewportRef={scrollAreaRef}
-                    type="never"
-                >
-                    <Tabs
-                        defaultValue="first"
-                        styles={{
-                            tabLabel: {
-                                whiteSpace: "nowrap",
-                            },
-                            tabsList: {
-                                flexWrap: "nowrap",
-                            },
-                            tab: {
-                                border: `1px solid ${theme.colors.gray[8]}`,
-                            },
-                        }}
-                        variant="pills"
-                        color="blue"
-                        mb={10}
-                    >
-                        <Tabs.List>
-                            <Tabs.Tab value="first">First tab</Tabs.Tab>
-                            <Tabs.Tab value="second">Second tab</Tabs.Tab>
-                            <Tabs.Tab value="third">Third tab</Tabs.Tab>
-                            <Tabs.Tab value="4">2b</Tabs.Tab>
-                            <Tabs.Tab value="5">Thi234rd tab</Tabs.Tab>
-                            <Tabs.Tab value="6">23423 tab</Tabs.Tab>
-                            <Tabs.Tab value="7">234 tab</Tabs.Tab>
-                            <Tabs.Tab value="8">Thi22rd tab</Tabs.Tab>
-                            <Tabs.Tab value="9">11 tab</Tabs.Tab>
-                            <Tabs.Tab value="20">55 tab</Tabs.Tab>
+            <TabContainer>
+                {Object.entries(tabs).map(([identifier, title]) => (
+                    <Tab
+                        identifier={identifier}
+                        title={title}
+                        active={activeTab === identifier}
+                        setActive={setActiveTab}
+                    />
+                ))}
+            </TabContainer>
 
-                            <Tabs.Tab value="1234">212234 tab</Tabs.Tab>
-                            <Tabs.Tab value="2314">1234 tab</Tabs.Tab>
-                            <Tabs.Tab value="12312314">Thi213rd tab</Tabs.Tab>
-                        </Tabs.List>
-                    </Tabs>
-                </ScrollArea>
-            </Box>
-            <Editor
-                language="lua"
-                theme="vs-dark"
-                height="90vh"
-                onMount={onEditorMount}
-                options={{
-                    fontSize: 12.2,
-                }}
-            />
+            <CodeEditor />
         </>
     );
 }

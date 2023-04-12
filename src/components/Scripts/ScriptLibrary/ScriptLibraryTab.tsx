@@ -7,13 +7,13 @@ import {
     Skeleton,
 } from "@mantine/core";
 import { useDebouncedState } from "@mantine/hooks";
-import { ScriptLibraryScript, searchScript } from "../../../lib/script-library";
 import useAsyncEffect from "use-async-effect";
-import { ScriptListItem } from "./ScriptSearchCard/ScriptSearchCard";
 import { useState } from "react";
 import { stagger } from "framer-motion";
+import { ScriptListItem } from "./ScriptSearchCard/ScriptSearchCard";
+import { ScriptLibraryScript, searchScript } from "../../../lib/script-library";
 
-function Scripts() {
+export function ScriptLibraryTab() {
     const theme = useMantineTheme();
 
     const [query, setQuery] = useDebouncedState("", 500);
@@ -34,6 +34,7 @@ function Scripts() {
             console.log(result);
 
             if (!result) {
+                // eslint-disable-next-line consistent-return
                 return setError("Failed to load scripts");
             }
 
@@ -69,7 +70,7 @@ function Scripts() {
                     { maxWidth: "lg", cols: 3 },
                 ]}
             >
-                {query == "" && "Please enter a search query"}
+                {query === "" && "Please enter a search query"}
                 {loading &&
                     Array.from({ length: 12 }).map((_, i) => (
                         <Skeleton key={i} height="250px" />
@@ -77,25 +78,17 @@ function Scripts() {
                 {error && `Error: ${error}`}
                 {scripts.length !== 0 && (
                     <>
-                        {scripts.map((script, i) => {
-                            return (
-                                <ScriptListItem
-                                    image={script.thumbnail}
-                                    title={script.name}
-                                    author={script.created_by ?? "Unknown"}
-                                    saves={script.saves}
-                                    animationDelay={staggerDelay(
-                                        i,
-                                        scripts.length
-                                    )}
-                                />
-                            );
-                        })}
+                        {scripts.map((script, i) => (
+                            <ScriptListItem
+                                image={script.thumbnail}
+                                title={script.name}
+                                saves={script.saves}
+                                animationDelay={staggerDelay(i, scripts.length)}
+                            />
+                        ))}
                     </>
                 )}
             </SimpleGrid>
         </Box>
     );
 }
-
-export default Scripts;
