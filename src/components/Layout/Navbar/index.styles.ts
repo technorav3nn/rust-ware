@@ -13,13 +13,10 @@ export const useStyles = createStyles((theme) => ({
 
         "&:hover": {
             opacity: 1,
-            backgroundColor: theme.fn.lighten(
-                theme.fn.variant({
-                    variant: "filled",
-                    color: "gray",
-                }).background!,
-                0.1
-            ),
+            backgroundColor:
+                theme.colorScheme === "dark"
+                    ? theme.colors.dark[5]
+                    : theme.colors.gray[0],
         },
     },
 

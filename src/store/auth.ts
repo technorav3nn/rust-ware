@@ -15,8 +15,4 @@ export const useAuthStore = create<GlobalState>((set) => ({
         set({ authModalLoading: loading }),
 }));
 
-useAuthStore.subscribe((state) => {
-    console.log("authStore", state);
-});
-
 export const authStore = useAuthStore;

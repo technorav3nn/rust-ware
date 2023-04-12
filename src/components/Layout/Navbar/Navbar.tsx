@@ -1,52 +1,14 @@
 import {
-    createStyles,
     Navbar as MantineNavbar,
     Stack,
     Tooltip,
     UnstyledButton,
-    useMantineTheme,
 } from "@mantine/core";
-import { MdCode, MdSettings, MdTerminal, MdDescription } from "react-icons/md";
 import { IconType } from "react-icons";
 import { useEffect, useState } from "react";
-import { HiPlay } from "react-icons/hi2";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { NAVBAR_TOP_ITEMS, NAVBAR_BOTTOM_ITEMS } from "./index.data";
-
-const useStyles = createStyles((theme) => ({
-    link: {
-        width: 50,
-        height: 50,
-        borderRadius: theme.radius.md,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        color: theme.white,
-        opacity: 0.85,
-
-        "&:hover": {
-            opacity: 1,
-            backgroundColor: theme.fn.lighten(
-                theme.fn.variant({
-                    variant: "filled",
-                    color: "gray",
-                }).background!,
-                0.1
-            ),
-        },
-    },
-
-    active: {
-        opacity: 1,
-        "&, &:hover": {
-            backgroundImage: theme.fn.gradient({
-                from: theme.colors.blue[8],
-                to: theme.colors.blue[5],
-                deg: 45,
-            }),
-        },
-    },
-}));
+import { useStyles } from "./index.styles";
 
 interface NavbarLinkProps {
     icon: IconType;
@@ -87,9 +49,13 @@ export const NavbarLink = ({
             position="right"
             color="gray"
             transitionProps={{ transition: "slide-right", duration: 200 }}
-            sx={{
+            sx={(theme) => ({
                 transform: hovered ? "translateX(100px)" : "",
-            }}
+                backgroundColor:
+                    theme.colorScheme === "dark"
+                        ? theme.colors.dark[5]
+                        : theme.colors.gray[0],
+            })}
         >
             <UnstyledButton
                 className={cx(classes.link, {
