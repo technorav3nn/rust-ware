@@ -5,28 +5,51 @@ import {
     Box,
     SimpleGrid,
     Skeleton,
+    Alert,
 } from "@mantine/core";
 import { useDebouncedState } from "@mantine/hooks";
 import useAsyncEffect from "use-async-effect";
 import { useState } from "react";
 import { stagger } from "framer-motion";
+import { IconAlertCircle } from "@tabler/icons-react";
 import { ScriptListItem } from "./ScriptSearchCard/ScriptSearchCard";
 import { ScriptLibraryScript, searchScript } from "../../../lib/script-library";
+
+const ErrorNotification = ({ text }: { text: string }) => (
+    <Alert
+        icon={<IconAlertCircle size="1rem" />}
+        title={text}
+        styles={{
+            root: {
+                paddingBottom: "2px",
+            },
+        }}
+        color="red"
+    >
+        <></>
+    </Alert>
+);
 
 export function ScriptLibraryTab() {
     const theme = useMantineTheme();
 
     const [query, setQuery] = useDebouncedState("", 500);
-    const [error, setError] = useState<string | false>(false);
+    const [error, setError] = useState<string | null>();
 
     const [loading, setLoading] = useState(false);
     const [scripts, setScripts] = useState<ScriptLibraryScript[]>([]);
 
     const staggerDelay = stagger(0.2, { startDelay: 0.2 });
 
+    // eslint-disable-next-line consistent-return
     useAsyncEffect(async () => {
         setScripts([]);
-        if (query.length < 3) return;
+        if (query.length < 3) {
+            return setError("Please enter more than 3 characters");
+        }
+
+        setError(null);
+
         setLoading(true);
 
         try {
@@ -54,7 +77,10 @@ export function ScriptLibraryTab() {
                     defaultValue={query}
                     styles={{
                         input: {
-                            background: theme.fn.lighten("gray", 0.1),
+                            background:
+                                theme.colorScheme === "dark"
+                                    ? theme.fn.lighten("gray", 0.1)
+                                    : theme.colors.gray[1],
                         },
                     }}
                     pb="sm"
@@ -70,12 +96,14 @@ export function ScriptLibraryTab() {
                     { maxWidth: "lg", cols: 3 },
                 ]}
             >
-                {query === "" && "Please enter a search query"}
+                {query.trim() === "" && (
+                    <ErrorNotification text="Please enter a search query!" />
+                )}
                 {loading &&
                     Array.from({ length: 12 }).map((_, i) => (
                         <Skeleton key={i} height="250px" />
                     ))}
-                {error && `Error: ${error}`}
+                {error && <ErrorNotification text={error} />}
                 {scripts.length !== 0 && (
                     <>
                         {scripts.map((script, i) => (

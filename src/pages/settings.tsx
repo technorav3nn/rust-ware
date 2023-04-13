@@ -46,7 +46,6 @@ function Settings() {
             <StyledSegmentedControl
                 data={segmentedControlData}
                 onChange={setTab}
-                color="blue"
                 value={tab}
                 mb="sm"
             />

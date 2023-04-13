@@ -2523,6 +2523,11 @@ magic-string@^0.27.0:
   dependencies:
     "@jridgewell/sourcemap-codec" "^1.4.13"
 
+mantine-contextmenu@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/mantine-contextmenu/-/mantine-contextmenu-1.1.1.tgz#603268cd7856e821c2ab78840c863b8f492f7807"
+  integrity sha512-hynNGt9ycHAN48+mTlTaj6XIhCyOwRWV74CTM4+cwc3QmDfPoRQ1atpep8TBPTHGD81lL5VHwAg2pAcuooKxKw==
+
 merge2@^1.3.0, merge2@^1.4.1:
   version "1.4.1"
   resolved "https://registry.yarnpkg.com/merge2/-/merge2-1.4.1.tgz#4368892f885e907455a6fd7dc55c0c9d404990ae"

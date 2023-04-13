@@ -4,6 +4,7 @@ export const useStyles = createStyles((theme) => ({
     root: {
         backgroundColor:
             theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.white,
+
         boxShadow: theme.shadows.lg,
         border: `${rem(1)} solid ${
             theme.colorScheme === "dark"
@@ -13,10 +14,14 @@ export const useStyles = createStyles((theme) => ({
     },
 
     indicator: {
-        backgroundColor: theme.fn.gradient({
+        backgroundImage: theme.fn.gradient({
             from: theme.colors.blue[5],
-            to: theme.colors.pink[7],
+            to: theme.colors.blue[7],
         }),
+    },
+
+    control: {
+        border: "0 !important",
     },
 
     label: {
@@ -25,5 +30,6 @@ export const useStyles = createStyles((theme) => ({
                 color: theme.white,
             },
         },
+        color: theme.colorScheme === "dark" ? theme.white : theme.black,
     },
 }));

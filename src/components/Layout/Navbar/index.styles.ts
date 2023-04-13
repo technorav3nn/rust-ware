@@ -8,7 +8,8 @@ export const useStyles = createStyles((theme) => ({
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        color: theme.white,
+        color:
+            theme.colorScheme === "dark" ? theme.white : theme.colors.dark[8],
         opacity: 0.85,
 
         "&:hover": {
@@ -28,6 +29,7 @@ export const useStyles = createStyles((theme) => ({
                 to: theme.colors.blue[5],
                 deg: 45,
             }),
+            color: theme.white,
         },
     },
 }));

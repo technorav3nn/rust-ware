@@ -47,14 +47,14 @@ export const NavbarLink = ({
         <Tooltip
             label={label}
             position="right"
-            color="gray"
             transitionProps={{ transition: "slide-right", duration: 200 }}
             sx={(theme) => ({
                 transform: hovered ? "translateX(100px)" : "",
                 backgroundColor:
                     theme.colorScheme === "dark"
                         ? theme.colors.dark[5]
-                        : theme.colors.gray[0],
+                        : theme.colors.gray[3],
+                color: theme.colorScheme === "dark" ? "white" : "black",
             })}
         >
             <UnstyledButton

@@ -2,7 +2,10 @@ import { createStyles, rem } from "@mantine/core";
 
 export const useStyles = createStyles((theme) => ({
     card: {
-        backgroundColor: theme.fn.lighten("gray", 0.11),
+        backgroundColor:
+            theme.colorScheme === "dark"
+                ? theme.fn.lighten("gray", 0.11)
+                : theme.white,
     },
 
     item: {

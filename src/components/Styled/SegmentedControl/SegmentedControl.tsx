@@ -8,7 +8,6 @@ export function StyledSegmentedControl(props: SegmentedControlProps) {
             radius="xl"
             size="sm"
             classNames={classes}
-            color="blue"
             transitionTimingFunction="ease-in"
             {...props}
         />

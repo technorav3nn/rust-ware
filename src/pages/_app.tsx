@@ -20,7 +20,6 @@ const theme: MantineThemeOverride = {
             backgroundColor: "transparent",
         },
     }),
-    black: "#00000000",
     components: {
         Button: {},
     },

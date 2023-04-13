@@ -1,25 +1,12 @@
-import { useEffect, useRef, useState, WheelEvent } from "react";
-import { OnMount } from "@monaco-editor/react";
+import { useEffect, useRef, WheelEvent } from "react";
 import { CodeEditor } from "../components/Editor/CodeEditor";
 import { TabContainer } from "../components/Editor/Tabs/TabContainer";
 import { Tab } from "../components/Editor/Tabs/Tab";
-
-const tabs = {
-    first: "First taasdfsasdfsdafasdfsadfasdfdsfasdfdafb",
-    second: "Second tab",
-    third: "Third tab",
-    fourth: "Fourth tab",
-    fifth: "Fifth tab",
-    sixth: "Sixth tab",
-    seventh: "Seventh tab",
-    eighth: "Eighth tab",
-    ninth: "Ninth tab",
-    tenth: "Tenth tab",
-};
+import { useTabStore } from "../store/tabs";
 
 function Index() {
     const scrollAreaRef = useRef<HTMLDivElement>(null);
-    const [activeTab, setActiveTab] = useState("first");
+    const tabStore = useTabStore();
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const onMouseWheel = (e: WheelEvent) => {
@@ -32,17 +19,18 @@ function Index() {
         }
     };
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const onEditorMount: OnMount = (editor, monaco) => {
-        // setupTheme(monaco);
-        // monaco.editor.setTheme("defaultTheme");
-    };
-
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const onTabClose = (e: React.MouseEvent) => {};
-
     useEffect(() => {
         document.body.style.overflow = "hidden";
+        if (tabStore.tabs.length === 0) {
+            tabStore.addTab({
+                identifier: "first",
+                title: "First tab",
+                editorText: "print('Hello world!')",
+            });
+            tabStore.setActiveTab("first");
+            console.log(useTabStore.getState().activeTab);
+        }
+
         return () => {
             document.body.style.overflow = "auto";
         };
@@ -51,12 +39,13 @@ function Index() {
     return (
         <>
             <TabContainer>
-                {Object.entries(tabs).map(([identifier, title]) => (
+                {tabStore.tabs.map((tab) => (
                     <Tab
-                        identifier={identifier}
-                        title={title}
-                        active={activeTab === identifier}
-                        setActive={setActiveTab}
+                        identifier={tab.identifier}
+                        title={tab.title}
+                        //setActive={(identifier) =>
+                        //    tabStore.setActiveTab(identifier)
+                        //}
                     />
                 ))}
             </TabContainer>
