@@ -24,3 +24,5 @@ core/target
 *.njsproj
 *.sln
 *.sw?
+
+stats.html*
