@@ -26,3 +26,4 @@ core/target
 *.sw?
 
 stats.html*
+bundle-stats.html*
